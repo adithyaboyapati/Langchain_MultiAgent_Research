@@ -11,7 +11,8 @@ st.set_page_config(
 )
 
 # ── Custom CSS ────────────────────────────────────────────────────────────────
-st.markdown("""
+st.markdown(
+    """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
 
@@ -304,7 +305,9 @@ details summary {
     letter-spacing: 0.08em;
 }
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 
 # ── Helper: render a step card ────────────────────────────────────────────────
@@ -312,22 +315,25 @@ def step_card(num: str, title: str, state: str, desc: str = ""):
     status_map = {
         "waiting": ("WAITING", "status-waiting"),
         "running": ("● RUNNING", "status-running"),
-        "done":    ("✓ DONE",   "status-done"),
+        "done": ("✓ DONE", "status-done"),
     }
 
     label, cls = status_map.get(state, ("", ""))
     card_cls = {"running": "active", "done": "done"}.get(state, "")
 
-    st.markdown(f"""
+    st.markdown(
+        f"""
     <div class="step-card {card_cls}">
         <div class="step-header">
             <span class="step-num">{num}</span>
             <span class="step-title">{title}</span>
             <span class="step-status {cls}">{label}</span>
         </div>
-        {"<div style='font-size:0.82rem;color:#94a3b8;margin-top:0.3rem;'>"+desc+"</div>" if desc else ""}
+        {"<div style='font-size:0.82rem;color:#94a3b8;margin-top:0.3rem;'>" + desc + "</div>" if desc else ""}
     </div>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
 
 # ── Session state init ────────────────────────────────────────────────────────
@@ -337,7 +343,8 @@ for key in ("results", "running", "done"):
 
 
 # ── Hero ──────────────────────────────────────────────────────────────────────
-st.markdown("""
+st.markdown(
+    """
 <div class="hero">
     <div class="hero-eyebrow">Multi-Agent AI System</div>
     <h1>Researcher<span>Agent</span></h1>
@@ -348,14 +355,15 @@ st.markdown("""
 </div>
 
 <div class="divider"></div>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 
 # ── Layout: input left, pipeline right ───────────────────────────────────────
 col_input, col_spacer, col_pipeline = st.columns([5, 0.5, 4])
 
 with col_input:
-
     st.markdown('<div class="input-card">', unsafe_allow_html=True)
 
     topic = st.text_input(
@@ -365,20 +373,20 @@ with col_input:
         label_visibility="visible",
     )
 
-    run_btn = st.button(
-        "⚡ Run Research Pipeline",
-        use_container_width=True
-    )
+    run_btn = st.button("⚡ Run Research Pipeline", use_container_width=True)
 
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
     # Example chips
-    st.markdown("""
+    st.markdown(
+        """
     <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.5rem;">
         <span style="font-family:'DM Mono',monospace;font-size:0.68rem;color:#7f93ad;letter-spacing:0.1em;">
             TRY →
         </span>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
     examples = [
         "Future of LLM in Tech Industry",
@@ -387,7 +395,8 @@ with col_input:
     ]
 
     for ex in examples:
-        st.markdown(f"""
+        st.markdown(
+            f"""
         <span style="
             background:rgba(255,255,255,0.05);
             border:1px solid rgba(255,255,255,0.08);
@@ -400,16 +409,14 @@ with col_input:
         ">
             {ex}
         </span>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
 
     st.markdown("</div>", unsafe_allow_html=True)
 
 with col_pipeline:
-
-    st.markdown(
-        '<div class="section-heading">Pipeline</div>',
-        unsafe_allow_html=True
-    )
+    st.markdown('<div class="section-heading">Pipeline</div>', unsafe_allow_html=True)
 
     r = st.session_state.results
     done = st.session_state.done
@@ -431,38 +438,17 @@ with col_pipeline:
 
         return "waiting"
 
-    step_card(
-        "01",
-        "Search Agent",
-        s("search"),
-        "Gathers recent web information"
-    )
+    step_card("01", "Search Agent", s("search"), "Gathers recent web information")
 
-    step_card(
-        "02",
-        "Reader Agent",
-        s("reader"),
-        "Scrapes & extracts deep content"
-    )
+    step_card("02", "Reader Agent", s("reader"), "Scrapes & extracts deep content")
 
-    step_card(
-        "03",
-        "Writer Chain",
-        s("writer"),
-        "Drafts the full research report"
-    )
+    step_card("03", "Writer Chain", s("writer"), "Drafts the full research report")
 
-    step_card(
-        "04",
-        "Critic Chain",
-        s("critic"),
-        "Reviews & scores the report"
-    )
+    step_card("04", "Critic Chain", s("critic"), "Reviews & scores the report")
 
 
 # ── Run pipeline ──────────────────────────────────────────────────────────────
 if run_btn:
-
     if not topic.strip():
         st.warning("Please enter a research topic first.")
 
@@ -474,63 +460,51 @@ if run_btn:
 
 
 if st.session_state.running and not st.session_state.done:
-
     results = {}
     topic_val = st.session_state.topic_input
 
     # ── Step 1: Search ──
     with st.spinner("🔍 Search Agent is working…"):
-
         search_agent = build_search_agent()
 
-        sr = search_agent.invoke({
-            "messages": [
-                ("user",
-                 f"Find recent, reliable and detailed information about: {topic_val}")
-            ]
-        })
+        sr = search_agent.invoke(
+            {"messages": [("user", f"Find recent, reliable and detailed information about: {topic_val}")]}
+        )
 
         results["search"] = sr["messages"][-1].content
         st.session_state.results = dict(results)
 
     # ── Step 2: Reader ──
     with st.spinner("📄 Reader Agent is scraping top resources…"):
-
         reader_agent = build_reader_agent()
 
-        rr = reader_agent.invoke({
-            "messages": [(
-                "user",
-                f"Based on the following search results about '{topic_val}', "
-                f"pick the most relevant URL and scrape it for deeper content.\n\n"
-                f"Search Results:\n{results['search'][:800]}"
-            )]
-        })
+        rr = reader_agent.invoke(
+            {
+                "messages": [
+                    (
+                        "user",
+                        f"Based on the following search results about '{topic_val}', "
+                        f"pick the most relevant URL and scrape it for deeper content.\n\n"
+                        f"Search Results:\n{results['search'][:800]}",
+                    )
+                ]
+            }
+        )
 
         results["reader"] = rr["messages"][-1].content
         st.session_state.results = dict(results)
 
     # ── Step 3: Writer ──
     with st.spinner("✍️ Writer is drafting the report…"):
+        research_combined = f"SEARCH RESULTS:\n{results['search']}\n\nDETAILED SCRAPED CONTENT:\n{results['reader']}"
 
-        research_combined = (
-            f"SEARCH RESULTS:\n{results['search']}\n\n"
-            f"DETAILED SCRAPED CONTENT:\n{results['reader']}"
-        )
-
-        results["writer"] = writer_chain.invoke({
-            "topic": topic_val,
-            "research": research_combined
-        })
+        results["writer"] = writer_chain.invoke({"topic": topic_val, "research": research_combined})
 
         st.session_state.results = dict(results)
 
     # ── Step 4: Critic ──
     with st.spinner("🧐 Critic is reviewing the report…"):
-
-        results["critic"] = critic_chain.invoke({
-            "report": results["writer"]
-        })
+        results["critic"] = critic_chain.invoke({"report": results["writer"]})
 
         st.session_state.results = dict(results)
 
@@ -544,20 +518,15 @@ if st.session_state.running and not st.session_state.done:
 r = st.session_state.results
 
 if r:
-
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-    st.markdown(
-        '<div class="section-heading">Results</div>',
-        unsafe_allow_html=True
-    )
+    st.markdown('<div class="section-heading">Results</div>', unsafe_allow_html=True)
 
     # Raw outputs
     if "search" in r:
         with st.expander("🔍 Search Results (raw)", expanded=False):
-
             st.markdown(
-                f'''
+                f"""
                 <div class="result-panel">
                     <div class="result-panel-title">
                         Search Agent Output
@@ -567,15 +536,14 @@ if r:
                         {r["search"]}
                     </div>
                 </div>
-                ''',
-                unsafe_allow_html=True
+                """,
+                unsafe_allow_html=True,
             )
 
     if "reader" in r:
         with st.expander("📄 Scraped Content (raw)", expanded=False):
-
             st.markdown(
-                f'''
+                f"""
                 <div class="result-panel">
                     <div class="result-panel-title">
                         Reader Agent Output
@@ -585,19 +553,21 @@ if r:
                         {r["reader"]}
                     </div>
                 </div>
-                ''',
-                unsafe_allow_html=True
+                """,
+                unsafe_allow_html=True,
             )
 
     # Final report
     if "writer" in r:
-
-        st.markdown("""
+        st.markdown(
+            """
         <div class="report-panel">
             <div class="panel-label orange">
                 📝 Final Research Report
             </div>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
 
         st.markdown(r["writer"])
 
@@ -613,13 +583,15 @@ if r:
 
     # Critic feedback
     if "critic" in r:
-
-        st.markdown("""
+        st.markdown(
+            """
         <div class="feedback-panel">
             <div class="panel-label green">
                 🧐 Critic Feedback
             </div>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
 
         st.markdown(r["critic"])
 
@@ -627,8 +599,11 @@ if r:
 
 
 # ── Footer ────────────────────────────────────────────────────────────────────
-st.markdown("""
+st.markdown(
+    """
 <div class="notice">
     ResearchAgent · Powered by LangChain multi-agent pipeline · Built with Streamlit
 </div>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)

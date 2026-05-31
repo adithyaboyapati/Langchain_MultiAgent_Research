@@ -20,15 +20,19 @@ class TestGetLlm:
         """get_llm should pass env-var values to ChatOpenAI."""
         mock_llm = MagicMock()
 
-        with patch.dict("os.environ", {
-            "LLM_MODEL": "test-model",
-            "OPENAI_API_KEY": "test-key",
-            "LLM_BASE_URL": "https://test.api.com",
-        }):
+        with patch.dict(
+            "os.environ",
+            {
+                "LLM_MODEL": "test-model",
+                "OPENAI_API_KEY": "test-key",
+                "LLM_BASE_URL": "https://test.api.com",
+            },
+        ):
             with patch("langchain_openai.ChatOpenAI", return_value=mock_llm) as mock_chat_openai:
                 # Reload the module so it picks up the patched ChatOpenAI
                 import importlib
                 import src.agents.agents as agents_mod
+
                 importlib.reload(agents_mod)
 
                 llm = agents_mod.get_llm()

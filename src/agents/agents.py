@@ -46,9 +46,12 @@ def build_reader_agent():
 
 
 # Writer chain
-writer_prompt = ChatPromptTemplate.from_messages([
-    ("system", "You are an expert research writer. Write clear, structured and insightful reports."),
-    ("human", """Write a detailed research report on the topic below.
+writer_prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "You are an expert research writer. Write clear, structured and insightful reports."),
+        (
+            "human",
+            """Write a detailed research report on the topic below.
 
 Topic: {topic}
 
@@ -61,16 +64,21 @@ Structure the report as:
 - Conclusion
 - Sources (list all URLs found in the research)
 
-Be detailed, factual and professional."""),
-])
+Be detailed, factual and professional.""",
+        ),
+    ]
+)
 
 writer_chain = writer_prompt | llm | StrOutputParser()
 
 
 # Critic chain
-critic_prompt = ChatPromptTemplate.from_messages([
-    ("system", "You are a sharp and constructive research critic. Be honest and specific."),
-    ("human", """Review the research report below and evaluate it strictly.
+critic_prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "You are a sharp and constructive research critic. Be honest and specific."),
+        (
+            "human",
+            """Review the research report below and evaluate it strictly.
 
 Report:
 {report}
@@ -88,7 +96,9 @@ Areas to Improve:
 - ...
 
 One line verdict:
-..."""),
-])
+...""",
+        ),
+    ]
+)
 
 critic_chain = critic_prompt | llm | StrOutputParser()
