@@ -1,0 +1,47 @@
+# Version control
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[codz]
+*.egg-info
+dist
+build
+
+# Environment & secrets
+.env
+.envrc
+.venv
+venv
+env
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Tests (not needed in production image)
+tests/
+.pytest_cache
+.coverage
+htmlcov
+coverage.xml
+
+# Dev config
+requirements-dev.txt
+pyproject.toml
+
+# Docs & assets
+README.md
+LICENSE
+demo.excalidraw
+*.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Gemini
+.gemini

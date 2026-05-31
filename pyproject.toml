@@ -1,0 +1,35 @@
+[project]
+name = "langchain-multi-agent-research-system"
+version = "1.0.0"
+description = "Multi-agent research system built with LangChain"
+requires-python = ">=3.11"
+
+# ── pytest configuration ──────────────────────────────────────────────────────
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+# ── ruff (linter + formatter) ────────────────────────────────────────────────
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+
+[tool.ruff.lint]
+# E = pycodestyle errors, F = pyflakes, I = isort, W = pycodestyle warnings
+select = ["E", "F", "I", "W"]
+# Ignore rules that conflict with existing code style
+ignore = [
+    "E501",   # line too long (handled by formatter)
+    "W291",   # trailing whitespace
+    "W292",   # no newline at end of file
+    "W293",   # whitespace before ':'
+    "I001",   # import sorting (existing code uses different order)
+    "F401",   # imported but unused (rich.print overrides builtins intentionally)
+    "F841",   # local variable assigned but unused (common in tests)
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
