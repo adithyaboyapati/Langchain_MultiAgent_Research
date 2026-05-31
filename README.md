@@ -17,6 +17,10 @@ A powerful multi-agent research system built with LangChain that autonomously re
 - **Quality Evaluation**: Built-in critic agent for report validation and scoring
 - **Interactive UI**: Streamlit-based user interface for easy interaction
 - **Pipeline Orchestration**: Seamless coordination of multiple agents
+- **CI/CD Pipeline**: GitHub Actions workflows for automated testing, linting, and Docker builds
+- **Docker Support**: Containerized deployment with health checks
+- **Comprehensive Testing**: Unit tests with pytest and coverage reporting
+- **Code Quality**: Ruff linting and formatting for consistent code standards
 
 ---
 
@@ -76,6 +80,10 @@ A powerful multi-agent research system built with LangChain that autonomously re
 | **Readability-lxml** | Article content extraction |
 | **Python-dotenv** | Environment configuration management |
 | **Rich** | Terminal output formatting |
+| **Pytest** | Testing framework with coverage reporting |
+| **Ruff** | Fast Python linter and formatter |
+| **Docker** | Container image building and deployment |
+| **GitHub Actions** | CI/CD pipeline automation |
 
 ---
 
@@ -149,6 +157,44 @@ python main.py
 
 Edit the `topic` variable in `main.py` to research different topics.
 
+### Run with Docker
+
+```bash
+docker build -t research-agent:latest .
+docker run -p 8501:8501 \
+  -e OPENAI_API_KEY=your_key \
+  -e TAVILY_API_KEY=your_key \
+  research-agent:latest
+```
+
+Then open `http://localhost:8501` in your browser.
+
+### Run Tests
+
+```bash
+# Run all tests with coverage
+pytest tests/ --cov=src --cov-report=term-missing
+
+# Run specific test file
+pytest tests/test_agents.py -v
+
+# Run with verbose output
+pytest tests/ -v
+```
+
+### Code Quality Checks
+
+```bash
+# Lint code
+ruff check .
+
+# Format code
+ruff format .
+
+# Check formatting without applying changes
+ruff format --check .
+```
+
 ---
 
 ## 📁 Project Structure
@@ -158,22 +204,62 @@ Edit the `topic` variable in `main.py` to research different topics.
 ├── app.py                      # Streamlit web interface
 ├── main.py                     # CLI entry point
 ├── requirements.txt            # Python dependencies
-├── README.md                   # This file
-├── LICENSE                     # License file
-├── demo.excalidraw            # Architecture diagram
+├── requirements-dev.txt        # Development dependencies (pytest, ruff)
+├── pyproject.toml             # Project configuration (pytest, ruff, coverage)
+├── Dockerfile                 # Container image configuration
+├── .dockerignore              # Files to exclude from Docker build
+├── .github/
+│   └── workflows/
+│       └── ci.yml             # GitHub Actions CI/CD pipeline
+├── README.md                  # This file
+├── LICENSE                    # License file
+├── demo.excalidraw           # Architecture diagram
+├── .env                       # Environment variables (not in repo)
 │
-└── src/
+├── src/
+│   ├── __init__.py
+│   ├── agents/
+│   │   ├── __init__.py
+│   │   └── agents.py          # Search, Reader, Writer, Critic agents
+│   ├── tools/
+│   │   ├── __init__.py
+│   │   └── tools.py           # web_search, scrape_url tools
+│   └── pipelines/
+│       ├── __init__.py
+│       └── pipeline.py        # Main research orchestration
+│
+└── tests/
     ├── __init__.py
-    ├── agents/
-    │   ├── __init__.py
-    │   └── agents.py           # Search, Reader, Writer, Critic agents
-    ├── tools/
-    │   ├── __init__.py
-    │   └── tools.py            # web_search, scrape_url tools
-    └── pipelines/
-        ├── __init__.py
-        └── pipeline.py         # Main research orchestration
+    ├── test_agents.py         # Agent unit tests
+    ├── test_tools.py          # Tool unit tests
+    └── test_app.py            # Application integration tests
 ```
+
+---
+
+## 🔄 CI/CD Pipeline
+
+The project includes a comprehensive GitHub Actions workflow (`ci.yml`) that automatically:
+
+1. **Lint & Format Check** 🔍
+   - Runs ruff linter to catch code issues
+   - Verifies code formatting consistency
+   - Fails the pipeline if violations are found
+
+2. **Unit Tests** 🧪
+   - Runs all tests in the `tests/` directory
+   - Generates coverage reports
+   - Only runs if linting passes
+
+3. **Docker Build** 🐳
+   - Builds the Docker image for deployment
+   - Verifies the container builds successfully
+   - Only runs if all tests pass
+
+The pipeline runs automatically on:
+- Every push to `main` branch
+- Every pull request to `main` branch
+- Path filtering ensures it only runs when relevant code changes
 
 ---
 
